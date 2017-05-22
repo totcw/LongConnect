@@ -27,5 +27,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     testCompile 'junit:junit:4.12'
     compile files('libs/mina-core-2.0.16.jar')
-    compile files('libs/slf4j-api-1.7.21.jar')
+    compile files('libs/slf4j-api-1.7.25.jar')
 }

@@ -3,6 +3,7 @@ package com.example.lyf.longconnect;
 import android.content.Context;
 
 /**
+ * 连接的配置文件
  * Created by lyf on 2017/5/20.
  */
 
@@ -17,41 +18,30 @@ public class ConnectConfig {
         return mContext;
     }
 
-    public void setmContext(Context mContext) {
-        this.mContext = mContext;
-    }
+
 
     public String getIp() {
         return ip;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
+
 
     public int getPort() {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
 
     public int getReadBufferSize() {
         return readBufferSize;
     }
 
-    public void setReadBufferSize(int readBufferSize) {
-        this.readBufferSize = readBufferSize;
-    }
+
 
     public long getConnectionTimeout() {
         return connectionTimeout;
     }
 
-    public void setConnectionTimeout(long connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
+
 
     public static class Builder{
         private Context mContext;

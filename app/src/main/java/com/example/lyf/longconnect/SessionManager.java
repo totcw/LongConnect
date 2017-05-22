@@ -3,6 +3,7 @@ package com.example.lyf.longconnect;
 import org.apache.mina.core.session.IoSession;
 
 /**
+ * session管理类,通过ioSession与服务器通信
  * Created by lyf on 2017/5/21.
  */
 
@@ -38,6 +39,9 @@ public class SessionManager {
         }
     }
 
+    /**
+     * 关闭连接
+     */
     public void closeSession() {
         if (ioSession != null) {
             ioSession.closeOnFlush();

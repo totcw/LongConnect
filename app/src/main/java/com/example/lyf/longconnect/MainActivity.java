@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
     private TextView tv;
     private Button btn,btn2;
-    private MyBroadcase broadcase;
+    private MyBroadcaseRedceiver mBroadcaseRedceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,17 +25,18 @@ public class MainActivity extends AppCompatActivity {
 
 
         IntentFilter filter = new IntentFilter(ConnectManager.BROADCAST_ACTION);
-        broadcase = new MyBroadcase();
-        registerReceiver(broadcase, filter);
+        mBroadcaseRedceiver = new MyBroadcaseRedceiver();
+        registerReceiver(mBroadcaseRedceiver, filter);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SessionManager.getmInstance().writeToServer("123");
+                SessionManager.getmInstance().writeToServer("发给服务器的消息 ");
             }
         });
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //开启服务
                 Intent intent = new Intent(MainActivity.this, ConnectService.class);
                 startService(intent);
             }
@@ -46,14 +47,18 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public class MyBroadcase extends BroadcastReceiver{
+    public class MyBroadcaseRedceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            tv.setText(intent.getStringExtra("message"));
+            tv.setText(intent.getStringExtra(ConnectManager.MESSAGE));
         }
     }
 
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mBroadcaseRedceiver);
+    }
 }

@@ -16,14 +16,15 @@ import java.lang.ref.WeakReference;
 import java.net.InetSocketAddress;
 
 /**
+ * 连接的管理类
  * Created by lyf on 2017/5/20.
  */
 
 public class ConnectManager {
     public static final String BROADCAST_ACTION="com.example.lyf.longconnect";
-    private static final String MESSAGE="message";
+    public static final String MESSAGE="message";
 
-    private ConnectConfig mConfig;
+    private ConnectConfig mConfig;//配置文件
     private WeakReference<Context> mContext;
     private NioSocketConnector mConnection;
     private IoSession mSessioin;
@@ -37,10 +38,15 @@ public class ConnectManager {
 
     private void init() {
         mAddress = new InetSocketAddress(mConfig.getIp(),mConfig.getPort());
+        //创建连接对象
         mConnection = new NioSocketConnector();
+        //设置连接地址
+        mConnection.setDefaultRemoteAddress(mAddress);
         mConnection.getSessionConfig().setReadBufferSize(mConfig.getReadBufferSize());
-        mConnection.getFilterChain().addLast("logging",new LoggingFilter());
+        //设置过滤
+        mConnection.getFilterChain().addLast("logger",new LoggingFilter());
         mConnection.getFilterChain().addLast("codec",new ProtocolCodecFilter(new ObjectSerializationCodecFactory()));
+        //设置连接监听
         mConnection.setHandler(new DefaultHandler(mContext.get()));
     }
 
@@ -51,13 +57,26 @@ public class ConnectManager {
             this.context = context;
         }
 
+        /**
+         * 连接成功时回调的方法
+         * @param session
+         * @throws Exception
+         */
         @Override
         public void sessionOpened(IoSession session) throws Exception {
-            //将我们的session保存到我们的sesscionmanager类中,从而可以发送消息到服务器
+            //当与服务器连接成功时,将我们的session保存到我们的sesscionmanager类中,从而可以发送消息到服务器
+            SessionManager.getmInstance().setIoSession(session);
         }
 
+        /**
+         * 接收到消息时回调的方法
+         * @param session
+         * @param message
+         * @throws Exception
+         */
         @Override
         public void messageReceived(IoSession session, Object message) throws Exception {
+
             if (context != null) {
                 //将接收到的消息利用广播发送出去
                 Intent intent = new Intent(BROADCAST_ACTION);
@@ -77,6 +96,7 @@ public class ConnectManager {
            future.awaitUninterruptibly();
            mSessioin = future.getSession();
        }catch (Exception e){
+           e.printStackTrace();
             return false;
        }
         return mSessioin==null?false:true;
@@ -92,4 +112,6 @@ public class ConnectManager {
         mAddress=null;
         mContext=null;
     }
+
+
 }
